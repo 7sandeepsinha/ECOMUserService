@@ -1,6 +1,6 @@
 package dev.sandeep.UserService.service;
 
-import dev.naman.userservicetestfinal.dtos.UserDto;
+import dev.sandeep.UserService.dto.UserDto;
 import dev.sandeep.UserService.model.Role;
 import dev.sandeep.UserService.model.User;
 import dev.sandeep.UserService.repository.RoleRepository;

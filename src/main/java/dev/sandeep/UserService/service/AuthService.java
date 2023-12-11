@@ -1,6 +1,6 @@
 package dev.sandeep.UserService.service;
 
-import dev.naman.userservicetestfinal.dtos.UserDto;
+import dev.sandeep.UserService.dto.UserDto;
 import dev.sandeep.UserService.model.Session;
 import dev.sandeep.UserService.model.SessionStatus;
 import dev.sandeep.UserService.model.User;
