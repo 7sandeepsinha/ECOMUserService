@@ -1,14 +1,15 @@
 package dev.sandeep.UserService.controller;
 
 import dev.sandeep.UserService.dto.*;
+import dev.sandeep.UserService.model.Session;
 import dev.sandeep.UserService.model.SessionStatus;
+import dev.sandeep.UserService.model.User;
 import dev.sandeep.UserService.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -22,7 +23,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody LoginRequestDto request) {
         return authService.login(request.getEmail(), request.getPassword());
-//        return null;
     }
 
     @PostMapping("/logout")
@@ -43,4 +43,14 @@ public class AuthController {
         return new ResponseEntity<>(sessionStatus, HttpStatus.OK);
     }
 
+    //below APIs are only for learning purposes, should not be present in actual systems
+    @GetMapping("/session")
+    public ResponseEntity<List<Session>> getAllSession(){
+        return authService.getAllSession();
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers(){
+        return authService.getAllUsers();
+    }
 }
