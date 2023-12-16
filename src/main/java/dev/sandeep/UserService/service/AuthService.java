@@ -2,6 +2,7 @@ package dev.sandeep.UserService.service;
 
 import dev.sandeep.UserService.dto.UserDto;
 import dev.sandeep.UserService.exception.InvalidCredentialException;
+import dev.sandeep.UserService.exception.InvalidTokenException;
 import dev.sandeep.UserService.exception.UserNotFoundException;
 import dev.sandeep.UserService.mapper.UserEntityDTOMapper;
 import dev.sandeep.UserService.model.Session;
@@ -9,6 +10,8 @@ import dev.sandeep.UserService.model.SessionStatus;
 import dev.sandeep.UserService.model.User;
 import dev.sandeep.UserService.repository.SessionRepository;
 import dev.sandeep.UserService.repository.UserRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.MacAlgorithm;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,10 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMapAdapter;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import javax.crypto.SecretKey;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -55,7 +57,23 @@ public class AuthService {
             throw new InvalidCredentialException("Invalid Credentials");
         }
         //token generation
-        String token = RandomStringUtils.randomAlphanumeric(30);
+        //String token = RandomStringUtils.randomAlphanumeric(30);
+        MacAlgorithm alg = Jwts.SIG.HS256; // HS256 algo added for JWT
+        SecretKey key = alg.key().build(); // generating the secret key
+
+        //start adding the claims
+        Map<String, Object> jsonForJWT = new HashMap<>();
+        jsonForJWT.put("email", user.getEmail());
+        jsonForJWT.put("roles", user.getRoles());
+        jsonForJWT.put("createdAt", new Date());
+        jsonForJWT.put("expiryAt", new Date(LocalDate.now().plusDays(3).toEpochDay()));
+
+        String token = Jwts.builder()
+                .claims(jsonForJWT) // added the claims
+                .signWith(key, alg) // added the algo and key
+                .compact(); //building the token
+
+
         //session creation
         Session session = new Session();
         session.setSessionStatus(SessionStatus.ACTIVE);
@@ -67,24 +85,19 @@ public class AuthService {
         UserDto userDto = UserEntityDTOMapper.getUserDTOFromUserEntity(user);
         //setting up the headers
         MultiValueMapAdapter<String, String> headers = new MultiValueMapAdapter<>(new HashMap<>());
-        headers.add(HttpHeaders.SET_COOKIE, "auth-token:" + token);
-        ResponseEntity<UserDto> response = new ResponseEntity<>(userDto, headers, HttpStatus.OK);
-        return response;
+        headers.add(HttpHeaders.SET_COOKIE, token);
+        return new ResponseEntity<>(userDto, headers, HttpStatus.OK);
     }
 
     public ResponseEntity<Void> logout(String token, Long userId) {
+        // validations -> token exists, token is not expired, user exists else throw an exception
         Optional<Session> sessionOptional = sessionRepository.findByTokenAndUser_Id(token, userId);
-
         if (sessionOptional.isEmpty()) {
-            return null;
+            return null; //TODO throw exception here
         }
-
         Session session = sessionOptional.get();
-
         session.setSessionStatus(SessionStatus.ENDED);
-
         sessionRepository.save(session);
-
         return ResponseEntity.ok().build();
     }
 
@@ -97,12 +110,13 @@ public class AuthService {
     }
 
     public SessionStatus validate(String token, Long userId) {
+        //TODO check expiry // Jwts Parser -> parse the encoded JWT token to read the claims
+
+        //verifying from DB if session exists
         Optional<Session> sessionOptional = sessionRepository.findByTokenAndUser_Id(token, userId);
-
-        if (sessionOptional.isEmpty()) {
-            return null;
+        if (sessionOptional.isEmpty() || sessionOptional.get().getSessionStatus().equals(SessionStatus.ENDED)) {
+            throw new InvalidTokenException("token is invalid");
         }
-
         return SessionStatus.ACTIVE;
     }
 
