@@ -1,0 +1,20 @@
+Fundamental APIs for auth are already given by Spring Security OAuth2
+1. /login
+2. /logout
+3. /signup
+4. /validate -> to validate the token from Resource Service to Auth Service
+5. /register -> registering a new client [ basically the service which will rely on Auth Service for authentication ]
+
+// Central AuthService
+
+// user login -> customer login
+// central AuthService [ OAuth ] all the micro-services will be client to this central service
+
+// employees login
+// SSO -> Single Sign On -> single way to sign in everyone
+// LDAP based authentication
+// Active Directories  -> only the admin user of the device can access
+
+
+
+
