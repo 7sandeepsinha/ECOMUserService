@@ -10,16 +10,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SpringSecurity {
 
-//    @Order(1)
-//    @Bean
-//    public SecurityFilterChain filteringCriteria(HttpSecurity http) throws Exception {
-//        http.cors().disable();
-//        http.csrf().disable();
-////        http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/auth/*").permitAll());
-////        http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/order/*").authenticated());
-//        http.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
-//        return http.build();
-//    }
+    @Order(1)
+    @Bean
+    public SecurityFilterChain filteringCriteria(HttpSecurity http) throws Exception {
+        http.cors().disable();
+        http.csrf().disable();
+//        http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/auth/*").permitAll());
+//        http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/order/*").authenticated());
+        http.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
+        return http.build();
+    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){

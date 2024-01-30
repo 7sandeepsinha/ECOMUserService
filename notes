@@ -15,6 +15,7 @@ Fundamental APIs for auth are already given by Spring Security OAuth2
 // LDAP based authentication
 // Active Directories  -> only the admin user of the device can access
 
-
+// HW -> Explore how Github login from terminal works
+// HW -> Explore how terminal talks to other services like Github....
 
 

@@ -48,3 +48,8 @@ public class CustomSpringUserDetails implements UserDetails {
         return true;
     }
 }
+
+
+/*
+https://accounts.google.com/o/oauth2/auth/oauthchooseaccount?access_type=offline&client_id=331221439469-cck96vlpggojbrd35h8ahaqkccngrsc9.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fwww.scaler.com%2Fusers%2Fauth%2Fgoogle_oauth2%2Fcallback&response_type=code&scope=email%20profile&state=cb8d416fa84318599881fbba230303651110ff526004d66f&service=lso&o2v=1&theme=glif&flowName=GeneralOAuthFlow
+ */
